@@ -1,36 +1,69 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# sen1or — portfolio
 
-## Getting Started
+Personal portfolio for **Huynh Thanh Nam** (`sen1or` / `ThNam203`).
 
-First, run the development server:
+Built with Next.js 16 (App Router), React 19, Tailwind CSS 4, Framer Motion. Content is sourced from a typed `content/` folder so updating the CV is one file edit, not a markup hunt.
+
+## Pages
+
+- `/` — hero, snapshot, featured projects, stack, live GitHub activity, latest posts, contact CTA
+- `/about` — long-form bio, education, certifications, skills
+- `/projects` — full list
+- `/projects/[slug]` — MDX case studies (letslive, favolist5-platform, store-management)
+- `/experience` — work timeline
+- `/writing` — posts pulled live from sen1or.blog RSS
+- `/resume` — PDF embed + download
+- `/contact` — Resend-backed form with honeypot + zod validation
+
+## Live data
+
+- **GitHub:** `lib/github.ts` calls the REST API with ISR (`revalidate: 3600`). No token required; supply `GITHUB_TOKEN` to raise the rate limit.
+- **Blog RSS:** `lib/rss.ts` parses `https://sen1or.blog/rss.xml` hourly.
+
+## Setup
 
 ```bash
+npm install
+cp .env.example .env.local   # fill in real keys
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Environment variables
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Key | Required | Purpose |
+|---|---|---|
+| `NEXT_PUBLIC_SITE_URL` | Yes (in prod) | Canonical URL for metadata, OG, sitemap. |
+| `RESEND_API_KEY` | Yes for `/contact` | API key from resend.com. |
+| `CONTACT_FROM_EMAIL` | Yes for `/contact` | Verified sender on your Resend domain. |
+| `CONTACT_TO_EMAIL` | Optional | Inbox that receives form submissions. Defaults to `hthnam203@gmail.com`. |
+| `GITHUB_TOKEN` | Optional | Fine-grained read-only token to raise GH rate limit. |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Without `RESEND_API_KEY` + `CONTACT_FROM_EMAIL`, the contact form returns 503 and asks the visitor to email directly.
 
-## Learn More
+## Scripts
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm run dev      # next dev (turbopack)
+npm run build    # production build
+npm run start    # serve production build
+npm run lint     # eslint
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Editing content
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Edit this | To change… |
+|---|---|
+| `content/profile.ts` | Name, bio, socials, stats, certifications |
+| `content/experience.ts` | Work history timeline |
+| `content/projects.ts` | Project list, featured flag, links |
+| `content/case-studies/*.mdx` | Long-form project write-ups |
+| `content/skills.ts` | Stack chips |
+| `public/resume.pdf` | Downloadable resume |
 
-## Deploy on Vercel
+## Deploy
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Push to GitHub, import into Vercel, set env vars. The `/api/og` route uses the edge runtime; the rest is standard Node.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## License
+
+Personal site — content is © Huynh Thanh Nam. The code structure is free for reuse.

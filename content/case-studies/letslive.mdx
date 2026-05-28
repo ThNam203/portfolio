@@ -1,0 +1,43 @@
+## The brief
+
+I wanted to know what it actually takes to run a live-streaming platform — not a tutorial demo, the real thing. So I built one end-to-end: OBS to a viewer's browser, with all the moving pieces in between.
+
+## Architecture
+
+```
+OBS  ──RTMP──►  Ingest  ──►  FFmpeg transcode  ──►  HLS (360p/720p/1080p)
+                                    │
+                                    ▼
+                               MinIO segments
+                                    │
+                                    ▼
+                              Next.js HLS player
+```
+
+Six Go microservices behind Kong API gateway, registered in Consul, talking over Redis Pub/Sub:
+
+- **auth** — issues access/refresh tokens
+- **user** — accounts, profile, follow graph
+- **livestream** — RTMP ingest control, stream keys, live state
+- **transcode** — FFmpeg workers producing multi-bitrate HLS
+- **vod** — recording, archive, playback URLs
+- **chat** — live chat fan-out
+
+## What I optimized for
+
+**Latency.** Segment length, GOP/keyframe interval, and playlist window all tuned to land around 10–15s end-to-end. Lower is possible with LL-HLS but the complexity wasn't worth it for a solo project.
+
+**Operability.** OpenTelemetry traces across all services into Tempo. Logs into Loki. Grafana dashboards for stream count, transcode lag, error budgets. I can actually see what's broken.
+
+**Deploy story.** GitHub Actions builds each service, ships to a self-hosted Docker host. No Kubernetes — the operational overhead wasn't justified at this scale.
+
+## What I learned
+
+- HLS playlist windowing is the single biggest knob for live-vs-VOD latency tradeoff.
+- Kong + Consul is more than enough for service discovery at this size; a service mesh would have been overkill.
+- MinIO is a great S3-compatible local target while iterating.
+- Go's standard library + a thin router is plenty for media-control planes.
+
+## Stack
+
+Go, Next.js, TypeScript, PostgreSQL, Redis, Kong, Consul, MinIO, FFmpeg, OpenTelemetry, Grafana (Tempo + Loki), Docker, GitHub Actions.

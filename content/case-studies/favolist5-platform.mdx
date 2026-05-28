@@ -1,0 +1,21 @@
+## Context
+
+FAVOLIST5 ASIA is a social content-sharing platform. I joined in May 2025 as a fullstack developer. The platform runs as roughly 11 TypeScript microservices on AWS ECS Fargate, with Vue/Nuxt and React/Next.js frontends.
+
+> This page describes architecture and outcomes only. No internal code, business logic, or proprietary details are shared.
+
+## What I worked on
+
+**Performance.** API latency was the loudest complaint. I tuned MySQL queries (covering indexes, kill the N+1 patterns) and introduced a Redis caching layer with targeted invalidation — keyed by entity, busted on writes, never relying on TTL alone. Result: noticeably faster lists and detail pages, fewer cold reads.
+
+**Email + notifications.** Built an automated email pipeline on AWS Lambda + SES + SNS, including bounce/complaint handling so the sender reputation stays clean.
+
+**Voice input.** Shipped real-time speech-to-text via AWS Transcribe streaming, wired through a WebSocket bridge so the browser gets partials as the user speaks.
+
+**CI/CD.** Maintained pipelines for 11+ services: GitHub Actions → ECR → ECS Fargate, using OIDC (no long-lived AWS keys in GH), blue-green deploys with automatic rollback on failed health checks, image vulnerability scans on every build, smoke tests in staging before promotion.
+
+**Cost.** Cut AWS spend by roughly 25% — off-hours ECS scheduling for non-prod, right-sizing of EC2/RDS, ECR lifecycle policies to expire old images. Boring, high-leverage work.
+
+## Stack
+
+TypeScript, NestJS, Express, Next.js, Nuxt, Vue, MySQL, Redis, AWS (ECS Fargate, Lambda, SES, SNS, Transcribe, CloudWatch), GitHub Actions.
