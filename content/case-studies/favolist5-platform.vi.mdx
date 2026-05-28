@@ -1,0 +1,21 @@
+## Bối cảnh
+
+FAVOLIST5 ASIA là nền tảng chia sẻ nội dung mạng xã hội. Tôi gia nhập tháng 5/2025 với vai trò lập trình viên fullstack. Nền tảng chạy dưới dạng khoảng 11 microservice TypeScript trên AWS ECS Fargate, với frontend Vue/Nuxt và React/Next.js.
+
+> Trang này chỉ mô tả kiến trúc và kết quả. Không chia sẻ code nội bộ, business logic, hay chi tiết độc quyền.
+
+## Tôi làm gì
+
+**Hiệu năng.** Latency API là phàn nàn lớn nhất. Tôi tinh chỉnh query MySQL (covering index, dẹp pattern N+1) và đưa vào lớp cache Redis với invalidation chính xác — key theo entity, bust khi write, không phụ thuộc TTL. Kết quả: list và detail page nhanh hơn rõ rệt, cold read giảm.
+
+**Email + thông báo.** Xây pipeline email tự động trên AWS Lambda + SES + SNS, bao gồm xử lý bounce/complaint để giữ sạch reputation người gửi.
+
+**Voice input.** Ship speech-to-text real-time qua AWS Transcribe streaming, qua cầu WebSocket để trình duyệt nhận partial khi user đang nói.
+
+**CI/CD.** Bảo trì pipeline cho 11+ service: GitHub Actions → ECR → ECS Fargate, dùng OIDC (không key AWS trường tồn trong GH), blue-green deploy với rollback tự động khi health check fail, image vulnerability scan mỗi build, smoke test ở staging trước khi promote.
+
+**Chi phí.** Cắt chi phí AWS khoảng 25% — scheduling ECS ngoài giờ cho non-prod, right-sizing EC2/RDS, ECR lifecycle policy để hết hạn image cũ. Việc nhàm chán nhưng đòn bẩy cao.
+
+## Stack
+
+TypeScript, NestJS, Express, Next.js, Nuxt, Vue, MySQL, Redis, AWS (ECS Fargate, Lambda, SES, SNS, Transcribe, CloudWatch), GitHub Actions.

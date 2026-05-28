@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { Loader2, Send } from "lucide-react";
 import { z } from "zod";
 import { cn } from "@/lib/utils";
+import type { Dict } from "@/i18n/dictionaries";
 
 const contactSchema = z.object({
   name: z.string().min(2, "Name is too short").max(80),
@@ -18,7 +19,7 @@ const contactSchema = z.object({
 
 type FormValues = z.infer<typeof contactSchema>;
 
-export function ContactForm() {
+export function ContactForm({ dict }: { dict: Dict["contact"] }) {
   const [isPending, startTransition] = useTransition();
   const [done, setDone] = useState(false);
   const {
@@ -38,14 +39,14 @@ export function ContactForm() {
         });
         const data = await res.json().catch(() => ({}));
         if (!res.ok) {
-          toast.error(data?.error || "Something went wrong. Try email instead.");
+          toast.error(data?.error || dict.errGeneric);
           return;
         }
-        toast.success("Message sent. I'll get back to you soon.");
+        toast.success(dict.sentOk);
         reset();
         setDone(true);
       } catch {
-        toast.error("Network error. Try email instead.");
+        toast.error(dict.errNetwork);
       }
     });
   };
@@ -65,37 +66,37 @@ export function ContactForm() {
         {...register("honey")}
       />
       <div className="grid gap-5 sm:grid-cols-2">
-        <Field label="Name" error={errors.name?.message}>
+        <Field label={dict.name} error={errors.name?.message}>
           <input
             type="text"
             autoComplete="name"
-            placeholder="Your name"
+            placeholder={dict.namePh}
             className={inputCls}
             {...register("name")}
           />
         </Field>
-        <Field label="Email" error={errors.email?.message}>
+        <Field label={dict.email} error={errors.email?.message}>
           <input
             type="email"
             autoComplete="email"
-            placeholder="you@domain.com"
+            placeholder={dict.emailPh}
             className={inputCls}
             {...register("email")}
           />
         </Field>
       </div>
-      <Field label="Subject" error={errors.subject?.message}>
+      <Field label={dict.subject} error={errors.subject?.message}>
         <input
           type="text"
-          placeholder="What's this about?"
+          placeholder={dict.subjectPh}
           className={inputCls}
           {...register("subject")}
         />
       </Field>
-      <Field label="Message" error={errors.message?.message}>
+      <Field label={dict.message} error={errors.message?.message}>
         <textarea
           rows={6}
-          placeholder="Tell me what you have in mind…"
+          placeholder={dict.messagePh}
           className={cn(inputCls, "resize-y")}
           {...register("message")}
         />
@@ -110,18 +111,18 @@ export function ContactForm() {
           {isPending ? (
             <>
               <Loader2 className="h-4 w-4 animate-spin" />
-              Sending…
+              {dict.sending}
             </>
           ) : (
             <>
               <Send className="h-4 w-4" />
-              Send message
+              {dict.send}
             </>
           )}
         </button>
         {done && (
           <span className="font-mono text-xs text-muted-foreground">
-            Sent. Send another?
+            {dict.sentAgain}
           </span>
         )}
       </div>

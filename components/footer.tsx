@@ -2,13 +2,21 @@ import Link from "next/link";
 import { profile } from "@/content/profile";
 import { Mail, Rss, Radio } from "lucide-react";
 import { GithubIcon } from "./icons";
+import type { Locale } from "@/i18n/config";
+import type { Dict } from "@/i18n/dictionaries";
 
-export function Footer() {
+export function Footer({
+  dict,
+  locale,
+}: {
+  dict: Dict["footer"];
+  locale: Locale;
+}) {
   return (
     <footer className="border-t border-border">
       <div className="mx-auto flex max-w-5xl flex-col gap-4 px-6 py-10 sm:flex-row sm:items-center sm:justify-between">
         <div className="font-mono text-xs text-muted-foreground">
-          © {new Date().getFullYear()} {profile.name} — built with Next.js.
+          © {new Date().getFullYear()} {profile.name} — {dict.builtWith}
         </div>
         <div className="flex items-center gap-4 text-muted-foreground">
           <Link
@@ -21,7 +29,7 @@ export function Footer() {
             <GithubIcon className="h-4 w-4" />
           </Link>
           <Link
-            href={profile.socials.blog}
+            href={localeBlogUrl(locale)}
             target="_blank"
             rel="noreferrer"
             aria-label="Blog"
@@ -49,4 +57,8 @@ export function Footer() {
       </div>
     </footer>
   );
+}
+
+function localeBlogUrl(locale: Locale): string {
+  return `https://www.sen1or.blog/${locale}`;
 }

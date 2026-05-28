@@ -7,55 +7,69 @@ import { MDXRemote } from "next-mdx-remote/rsc";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import { Container } from "@/components/container";
 import { projects } from "@/content/projects";
+import { isValidLocale, locales, type Locale } from "@/i18n/config";
+import { getDictionary } from "@/i18n/dictionaries";
+import { localizedProjects } from "@/content/i18n";
+import { localeHref } from "@/lib/utils";
 
-type Params = Promise<{ slug: string }>;
+type Params = Promise<{ locale: string; slug: string }>;
 
 export async function generateStaticParams() {
-  return projects.filter((p) => p.caseStudy).map((p) => ({ slug: p.slug }));
+  return locales.flatMap((locale) =>
+    projects
+      .filter((p) => p.caseStudy)
+      .map((p) => ({ locale, slug: p.slug })),
+  );
 }
 
 export async function generateMetadata(
   { params }: { params: Params },
 ): Promise<Metadata> {
-  const { slug } = await params;
-  const project = projects.find((p) => p.slug === slug);
+  const { locale: raw, slug } = await params;
+  if (!isValidLocale(raw)) return {};
+  const project = localizedProjects(raw as Locale).find((p) => p.slug === slug);
   if (!project) return {};
-  return {
-    title: project.name,
-    description: project.tagline,
-  };
+  return { title: project.name, description: project.tagline };
 }
 
-async function loadCaseStudy(slug: string): Promise<string | null> {
-  const file = path.join(
-    process.cwd(),
-    "content",
-    "case-studies",
+async function loadCaseStudy(
+  slug: string,
+  locale: Locale,
+): Promise<string | null> {
+  const base = path.join(process.cwd(), "content", "case-studies");
+  const candidates = [
+    locale !== "en" ? `${slug}.${locale}.mdx` : null,
     `${slug}.mdx`,
-  );
-  try {
-    return await fs.readFile(file, "utf8");
-  } catch {
-    return null;
+  ].filter(Boolean) as string[];
+  for (const c of candidates) {
+    try {
+      return await fs.readFile(path.join(base, c), "utf8");
+    } catch {}
   }
+  return null;
 }
 
 export default async function ProjectPage({ params }: { params: Params }) {
-  const { slug } = await params;
-  const project = projects.find((p) => p.slug === slug && p.caseStudy);
+  const { locale: raw, slug } = await params;
+  if (!isValidLocale(raw)) notFound();
+  const locale = raw as Locale;
+  const dict = getDictionary(locale);
+  const project = localizedProjects(locale).find(
+    (p) => p.slug === slug && p.caseStudy,
+  );
   if (!project) notFound();
 
-  const source = await loadCaseStudy(slug);
+  const source = await loadCaseStudy(slug, locale);
 
   return (
     <Container size="narrow">
       <div className="py-12 sm:py-16">
         <Link
-          href="/projects"
+          href={localeHref(locale, "projects")}
           className="inline-flex items-center gap-1.5 font-mono text-xs uppercase tracking-widest text-muted-foreground transition-colors hover:text-foreground"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
-          All projects
+          {dict.projects.backAll}
         </Link>
 
         <header className="mt-10 border-b border-border pb-10">
@@ -96,7 +110,7 @@ export default async function ProjectPage({ params }: { params: Params }) {
 
         <section className="mt-14 border-t border-border pt-8">
           <h2 className="mb-4 font-mono text-xs uppercase tracking-widest text-muted-foreground">
-            Stack
+            {dict.projects.stack}
           </h2>
           <ul className="flex flex-wrap gap-1.5">
             {project.stack.map((s) => (
@@ -112,7 +126,7 @@ export default async function ProjectPage({ params }: { params: Params }) {
 
         <section className="mt-10 border-t border-border pt-8">
           <h2 className="mb-4 font-mono text-xs uppercase tracking-widest text-muted-foreground">
-            Highlights
+            {dict.projects.highlights}
           </h2>
           <ul className="space-y-2 text-pretty text-muted-foreground">
             {project.highlights.map((h, i) => (

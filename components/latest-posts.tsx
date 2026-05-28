@@ -1,18 +1,27 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { fetchBlogPosts } from "@/lib/rss";
-import { profile } from "@/content/profile";
+import { blogUrl, blogRssUrl } from "@/lib/blog";
 import { formatDate } from "@/lib/format";
+import type { Locale } from "@/i18n/config";
 
-export async function LatestPosts({ limit = 3 }: { limit?: number }) {
-  const posts = (await fetchBlogPosts(profile.socials.blogRss)).slice(0, limit);
+export async function LatestPosts({
+  limit = 3,
+  locale,
+  noPostsText = "No posts available right now. Visit",
+}: {
+  limit?: number;
+  locale: Locale;
+  noPostsText?: string;
+}) {
+  const posts = (await fetchBlogPosts(blogRssUrl(locale))).slice(0, limit);
 
   if (posts.length === 0) {
     return (
       <p className="font-mono text-xs text-muted-foreground">
-        No posts available right now. Visit{" "}
+        {noPostsText}{" "}
         <Link
-          href={profile.socials.blog}
+          href={blogUrl(locale)}
           className="underline decoration-border underline-offset-4 hover:decoration-foreground"
         >
           sen1or.blog

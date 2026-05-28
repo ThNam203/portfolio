@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Mail, Radio, Rss } from "lucide-react";
 import { GithubIcon } from "@/components/icons";
@@ -6,33 +6,44 @@ import { Container } from "@/components/container";
 import { Section } from "@/components/section";
 import { ContactForm } from "@/components/contact-form";
 import { profile } from "@/content/profile";
+import { isValidLocale, type Locale } from "@/i18n/config";
+import { getDictionary } from "@/i18n/dictionaries";
+import { blogUrl } from "@/lib/blog";
 
-export const metadata: Metadata = {
-  title: "Contact",
-  description: `Get in touch with ${profile.name}.`,
-};
+type Params = Promise<{ locale: string }>;
 
-const channels = [
-  { label: "Email", value: profile.email, href: profile.socials.email, icon: Mail },
-  { label: "GitHub", value: "@ThNam203", href: profile.socials.github, icon: GithubIcon },
-  { label: "Blog", value: "sen1or.blog", href: profile.socials.blog, icon: Rss },
-  { label: "Project", value: "letslive.work", href: profile.socials.livestream, icon: Radio },
-];
+export async function generateMetadata({ params }: { params: Params }) {
+  const { locale: raw } = await params;
+  if (!isValidLocale(raw)) return {};
+  const dict = getDictionary(raw as Locale);
+  return { title: dict.contact.eyebrow };
+}
 
-export default function ContactPage() {
+export default async function ContactPage({ params }: { params: Params }) {
+  const { locale: raw } = await params;
+  if (!isValidLocale(raw)) notFound();
+  const locale = raw as Locale;
+  const dict = getDictionary(locale);
+
+  const channels = [
+    { label: "Email", value: profile.email, href: profile.socials.email, icon: Mail },
+    { label: "GitHub", value: "@ThNam203", href: profile.socials.github, icon: GithubIcon },
+    { label: "Blog", value: "sen1or.blog", href: blogUrl(locale), icon: Rss },
+    { label: "Project", value: "letslive.work", href: profile.socials.livestream, icon: Radio },
+  ];
+
   return (
     <Container size="narrow">
-      <Section eyebrow="Contact" title="Get in touch.">
+      <Section eyebrow={dict.contact.eyebrow} title={dict.contact.title}>
         <p className="max-w-xl text-pretty text-muted-foreground">
-          Send a message and I&apos;ll reply within a couple of days. For
-          quick stuff, email works best.
+          {dict.contact.blurb}
         </p>
 
         <div className="mt-10 grid gap-10 lg:grid-cols-[1fr,260px]">
-          <ContactForm />
+          <ContactForm dict={dict.contact} />
           <aside className="space-y-4">
             <h3 className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
-              Elsewhere
+              {dict.contact.elsewhere}
             </h3>
             <ul className="divide-y divide-border border-y border-border">
               {channels.map((c) => (

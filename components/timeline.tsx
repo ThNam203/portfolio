@@ -1,9 +1,9 @@
-import { experiences } from "@/content/experience";
+import type { Experience } from "@/content/experience";
 
-export function Timeline() {
+export function Timeline({ items }: { items: Experience[] }) {
   return (
     <ol className="relative space-y-12 border-l border-border pl-8">
-      {experiences.map((exp) => (
+      {items.map((exp) => (
         <li key={`${exp.company}-${exp.start}`} className="relative">
           <span className="absolute -left-[33px] top-2 h-2 w-2 rounded-full border border-border bg-background" />
           <div className="font-mono text-xs uppercase tracking-widest text-muted-foreground">

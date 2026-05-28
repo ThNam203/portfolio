@@ -1,9 +1,9 @@
-import { skills } from "@/content/skills";
+import type { SkillGroup } from "@/content/skills";
 
-export function SkillsGrid() {
+export function SkillsGrid({ groups }: { groups: SkillGroup[] }) {
   return (
     <div className="grid gap-8 sm:grid-cols-2">
-      {skills.map((group) => (
+      {groups.map((group) => (
         <div key={group.label} className="border-t border-border pt-6">
           <h3 className="mb-3 font-mono text-xs uppercase tracking-widest text-muted-foreground">
             {group.label}

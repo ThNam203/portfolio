@@ -1,0 +1,43 @@
+## Bài toán
+
+Tôi muốn biết thực sự cần gì để vận hành một nền tảng livestream — không phải bản demo tutorial, mà bản thật. Nên tôi xây từ đầu đến cuối: từ OBS đến trình duyệt người xem, với tất cả mảnh ghép ở giữa.
+
+## Kiến trúc
+
+```
+OBS  ──RTMP──►  Ingest  ──►  FFmpeg transcode  ──►  HLS (360p/720p/1080p)
+                                    │
+                                    ▼
+                               MinIO segments
+                                    │
+                                    ▼
+                              Next.js HLS player
+```
+
+Sáu Go microservice đứng sau Kong API gateway, đăng ký vào Consul, giao tiếp qua Redis Pub/Sub:
+
+- **auth** — phát hành access/refresh token
+- **user** — tài khoản, profile, đồ thị follow
+- **livestream** — điều khiển RTMP ingest, stream key, trạng thái live
+- **transcode** — FFmpeg worker sản xuất HLS đa bitrate
+- **vod** — recording, archive, URL playback
+- **chat** — fan-out chat live
+
+## Tôi tối ưu cho gì
+
+**Latency.** Tinh chỉnh độ dài segment, GOP/keyframe interval, và playlist window để đạt khoảng 10–15s end-to-end. Thấp hơn được với LL-HLS nhưng độ phức tạp không xứng với dự án solo.
+
+**Khả năng vận hành.** OpenTelemetry trace xuyên service vào Tempo. Log vào Loki. Grafana dashboard cho số lượng stream, độ trễ transcode, error budget. Tôi thực sự thấy được cái gì hỏng.
+
+**Câu chuyện deploy.** GitHub Actions build từng service, ship lên Docker host self-hosted. Không Kubernetes — chi phí vận hành không xứng ở quy mô này.
+
+## Tôi học được gì
+
+- Playlist windowing HLS là cần gạt lớn nhất cho tradeoff latency live-vs-VOD.
+- Kong + Consul đủ dùng cho service discovery ở quy mô này; service mesh là quá đà.
+- MinIO là target local S3-compatible tuyệt vời khi đang phát triển.
+- Standard library Go + router mỏng đủ cho control plane media.
+
+## Stack
+
+Go, Next.js, TypeScript, PostgreSQL, Redis, Kong, Consul, MinIO, FFmpeg, OpenTelemetry, Grafana (Tempo + Loki), Docker, GitHub Actions.

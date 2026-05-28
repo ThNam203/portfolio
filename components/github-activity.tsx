@@ -3,14 +3,20 @@ import { Star, GitFork, ArrowUpRight } from "lucide-react";
 import { fetchUserRepos, langColor } from "@/lib/github";
 import { formatRelative } from "@/lib/format";
 
-export async function GithubActivity({ limit = 6 }: { limit?: number }) {
+export async function GithubActivity({
+  limit = 6,
+  unavailableText = "GitHub data unavailable right now.",
+}: {
+  limit?: number;
+  unavailableText?: string;
+}) {
   const repos = await fetchUserRepos();
   const top = repos.slice(0, limit);
 
   if (top.length === 0) {
     return (
       <p className="font-mono text-xs text-muted-foreground">
-        GitHub data unavailable right now.
+        {unavailableText}
       </p>
     );
   }

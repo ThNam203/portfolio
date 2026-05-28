@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { Geist, Geist_Mono, Fraunces } from "next/font/google";
 import { Toaster } from "sonner";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-import { Nav } from "@/components/nav";
-import { Footer } from "@/components/footer";
 import { profile } from "@/content/profile";
 import { siteUrl } from "@/lib/utils";
+import { defaultLocale, isValidLocale } from "@/i18n/config";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -22,7 +22,7 @@ const geistMono = Geist_Mono({
 
 const fraunces = Fraunces({
   variable: "--font-fraunces",
-  subsets: ["latin"],
+  subsets: ["latin", "vietnamese"],
   display: "swap",
   axes: ["opsz", "SOFT"],
 });
@@ -34,39 +34,20 @@ export const metadata: Metadata = {
     template: `%s — ${profile.name}`,
   },
   description: profile.bio,
-  keywords: [
-    "Huynh Thanh Nam",
-    "sen1or",
-    "fullstack developer",
-    "Next.js",
-    "Go",
-    "microservices",
-    "AWS",
-    "Vietnam",
-  ],
   authors: [{ name: profile.name, url: profile.socials.github }],
   creator: profile.name,
-  openGraph: {
-    type: "website",
-    locale: "en_US",
-    url: "/",
-    siteName: profile.name,
-    title: `${profile.name} — ${profile.title}`,
-    description: profile.bio,
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: `${profile.name} — ${profile.title}`,
-    description: profile.bio,
-  },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const hdrs = await headers();
+  const locHeader = hdrs.get("x-locale") ?? "";
+  const lang = isValidLocale(locHeader) ? locHeader : defaultLocale;
+
   return (
     <html
-      lang="en"
+      lang={lang}
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} h-full antialiased`}
     >
@@ -77,9 +58,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Nav />
-          <main className="flex-1">{children}</main>
-          <Footer />
+          {children}
           <Toaster position="bottom-right" toastOptions={{ duration: 4000 }} />
         </ThemeProvider>
       </body>

@@ -1,15 +1,26 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import type { Project } from "@/content/projects";
+import type { Locale } from "@/i18n/config";
+import { localeHref } from "@/lib/utils";
 
 const cardCls =
   "group relative flex flex-col gap-4 border-t border-border py-8 transition-colors first:border-t-0 sm:flex-row sm:items-start sm:gap-10 sm:py-10";
 
-export function ProjectCard({ project }: { project: Project }) {
+export function ProjectCard({
+  project,
+  locale,
+}: {
+  project: Project;
+  locale: Locale;
+}) {
   const body = <ProjectBody project={project} />;
   if (project.caseStudy) {
     return (
-      <Link href={`/projects/${project.slug}`} className={cardCls}>
+      <Link
+        href={localeHref(locale, `projects/${project.slug}`)}
+        className={cardCls}
+      >
         {body}
       </Link>
     );

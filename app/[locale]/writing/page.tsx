@@ -1,27 +1,38 @@
-import type { Metadata } from "next";
 import { Suspense } from "react";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { ArrowUpRight, Rss } from "lucide-react";
 import { Container } from "@/components/container";
 import { Section } from "@/components/section";
 import { fetchBlogPosts } from "@/lib/rss";
-import { profile } from "@/content/profile";
+import { blogRssUrl, blogUrl } from "@/lib/blog";
 import { formatDate } from "@/lib/format";
+import { isValidLocale, type Locale } from "@/i18n/config";
+import { getDictionary } from "@/i18n/dictionaries";
 
-export const metadata: Metadata = {
-  title: "Writing",
-  description: `Posts from ${profile.socials.blog}.`,
-};
+type Params = Promise<{ locale: string }>;
 
-export default function WritingPage() {
+export async function generateMetadata({ params }: { params: Params }) {
+  const { locale: raw } = await params;
+  if (!isValidLocale(raw)) return {};
+  const dict = getDictionary(raw as Locale);
+  return { title: dict.writing.eyebrow };
+}
+
+export default async function WritingPage({ params }: { params: Params }) {
+  const { locale: raw } = await params;
+  if (!isValidLocale(raw)) notFound();
+  const locale = raw as Locale;
+  const dict = getDictionary(locale);
+
   return (
     <Container size="narrow">
       <Section
-        eyebrow="Writing"
-        title="From the blog."
+        eyebrow={dict.writing.eyebrow}
+        title={dict.writing.title}
         action={
           <Link
-            href={profile.socials.blog}
+            href={blogUrl(locale)}
             target="_blank"
             rel="noreferrer"
             className="inline-flex items-center gap-1.5 font-mono text-xs uppercase tracking-widest text-muted-foreground transition-colors hover:text-foreground"
@@ -32,10 +43,9 @@ export default function WritingPage() {
         }
       >
         <p className="mb-8 max-w-2xl text-pretty text-muted-foreground">
-          I write occasionally about systems, engineering practice, and
-          whatever I&apos;m chewing on. Posts here are pulled live from{" "}
+          {dict.writing.blurb}{" "}
           <Link
-            href={profile.socials.blog}
+            href={blogUrl(locale)}
             target="_blank"
             rel="noreferrer"
             className="text-foreground underline decoration-border underline-offset-4 hover:decoration-foreground"
@@ -45,29 +55,33 @@ export default function WritingPage() {
           .
         </p>
         <Suspense fallback={<PostsListSkeleton />}>
-          <PostsList />
+          <PostsList locale={locale} dict={dict.writing} />
         </Suspense>
       </Section>
     </Container>
   );
 }
 
-async function PostsList() {
-  const posts = await fetchBlogPosts(profile.socials.blogRss);
+async function PostsList({
+  locale,
+  dict,
+}: {
+  locale: Locale;
+  dict: { feedDown: string; visitDirect: string };
+}) {
+  const posts = await fetchBlogPosts(blogRssUrl(locale));
 
   if (posts.length === 0) {
     return (
       <div className="rounded-lg border border-border p-8 text-center">
-        <p className="text-muted-foreground">
-          Couldn&apos;t pull the feed right now.
-        </p>
+        <p className="text-muted-foreground">{dict.feedDown}</p>
         <Link
-          href={profile.socials.blog}
+          href={blogUrl(locale)}
           target="_blank"
           rel="noreferrer"
           className="mt-4 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-foreground hover:underline"
         >
-          Visit sen1or.blog directly
+          {dict.visitDirect}
           <ArrowUpRight className="h-3.5 w-3.5" />
         </Link>
       </div>
