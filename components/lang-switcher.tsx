@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Languages } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { locales, localeShort, type Locale } from "@/i18n/config";
 import { cn } from "@/lib/utils";
 
@@ -19,7 +19,20 @@ function swappedPath(pathname: string, target: Locale): string {
 
 export function LangSwitcher({ current }: { current: Locale }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [open, setOpen] = useState(false);
+
+  const targets = useMemo(
+    () =>
+      locales
+        .filter((l) => l !== current)
+        .map((l) => ({ locale: l, href: swappedPath(pathname, l) })),
+    [pathname, current],
+  );
+
+  useEffect(() => {
+    for (const { href } of targets) router.prefetch(href);
+  }, [router, targets]);
 
   return (
     <div className="relative">
