@@ -1,44 +1,50 @@
-# sen1or — portfolio
+# Portfolio
 
-Personal portfolio for **Huynh Thanh Nam** (`sen1or` / `ThNam203`).
+Personal site of **Huynh Thanh Nam** (`sen1or` / `ThNam203`).
 
-Built with Next.js 16 (App Router), React 19, Tailwind CSS 4, Framer Motion. Content is sourced from a typed `content/` folder so updating the CV is one file edit, not a markup hunt.
+Next.js 16 (App Router) · React 19 · Tailwind CSS 4 · Framer Motion · MDX · Resend.
+
+## Stack
+
+- **Framework:** Next.js 16 with App Router, Turbopack dev
+- **UI:** React 19, Tailwind CSS 4, Framer Motion 12, `next-themes`, `lucide-react`
+- **Content:** Typed TS modules in `content/`, MDX case studies via `next-mdx-remote`
+- **Forms:** `react-hook-form` + Zod validation, Resend for delivery, Sonner toasts
+- **OG images:** `@vercel/og` on the edge runtime
+- **Live data:** GitHub REST API + `sen1or.blog` RSS feed (ISR, 1h revalidate)
 
 ## Pages
 
-- `/` — hero, snapshot, featured projects, stack, live GitHub activity, latest posts, contact CTA
-- `/about` — long-form bio, education, certifications, skills
-- `/projects` — full list
-- `/projects/[slug]` — MDX case studies (letslive, favolist5-platform, store-management)
-- `/experience` — work timeline
-- `/writing` — posts pulled live from sen1or.blog RSS
-- `/resume` — PDF embed + download
-- `/contact` — Resend-backed form with honeypot + zod validation
-
-## Live data
-
-- **GitHub:** `lib/github.ts` calls the REST API with ISR (`revalidate: 3600`). No token required; supply `GITHUB_TOKEN` to raise the rate limit.
-- **Blog RSS:** `lib/rss.ts` parses `https://sen1or.blog/rss.xml` hourly.
+| Route | Purpose |
+|---|---|
+| `/` | Hero, snapshot, featured projects, stack, GitHub activity, latest posts, CTA |
+| `/about` | Long-form bio, education, certifications, skills |
+| `/projects` | Full project list |
+| `/projects/[slug]` | MDX case studies (`letslive`, `favolist5-platform`, `store-management`) |
+| `/experience` | Work timeline |
+| `/writing` | Posts pulled live from `sen1or.blog` RSS |
+| `/resume` | PDF embed + download |
+| `/contact` | Resend-backed form, honeypot, Zod validation |
 
 ## Setup
 
 ```bash
 npm install
-cp .env.example .env.local   # fill in real keys
+cp .env.example .env.local
 npm run dev
 ```
 
-## Environment variables
+## Environment
 
 | Key | Required | Purpose |
 |---|---|---|
-| `NEXT_PUBLIC_SITE_URL` | Yes (in prod) | Canonical URL for metadata, OG, sitemap. |
-| `RESEND_API_KEY` | Yes for `/contact` | API key from resend.com. |
-| `CONTACT_FROM_EMAIL` | Yes for `/contact` | Verified sender on your Resend domain. |
-| `CONTACT_TO_EMAIL` | Optional | Inbox that receives form submissions. Defaults to `hthnam203@gmail.com`. |
-| `GITHUB_TOKEN` | Optional | Fine-grained read-only token to raise GH rate limit. |
+| `NEXT_PUBLIC_SITE_URL` | prod | Canonical URL for metadata, OG, sitemap |
+| `RESEND_API_KEY` | `/contact` | resend.com API key |
+| `CONTACT_FROM_EMAIL` | `/contact` | Verified sender domain |
+| `CONTACT_TO_EMAIL` | optional | Inbox for submissions. Default `hthnam203@gmail.com` |
+| `GITHUB_TOKEN` | optional | Raises GitHub REST rate limit |
 
-Without `RESEND_API_KEY` + `CONTACT_FROM_EMAIL`, the contact form returns 503 and asks the visitor to email directly.
+Without `RESEND_API_KEY` + `CONTACT_FROM_EMAIL`, `/contact` returns 503 and prompts visitor to email directly.
 
 ## Scripts
 
@@ -49,21 +55,33 @@ npm run start    # serve production build
 npm run lint     # eslint
 ```
 
-## Editing content
+## Content edits
 
-| Edit this | To change… |
+| File | Controls |
 |---|---|
 | `content/profile.ts` | Name, bio, socials, stats, certifications |
-| `content/experience.ts` | Work history timeline |
+| `content/experience.ts` | Work timeline |
 | `content/projects.ts` | Project list, featured flag, links |
-| `content/case-studies/*.mdx` | Long-form project write-ups |
+| `content/case-studies/*.mdx` | Long-form write-ups |
 | `content/skills.ts` | Stack chips |
 | `public/resume.pdf` | Downloadable resume |
 
+## Project layout
+
+```
+app/          # App Router routes + API handlers
+components/   # Reusable UI primitives + section blocks
+content/      # Typed source-of-truth for profile, projects, skills, MDX
+i18n/         # Locale strings
+lib/          # github.ts, rss.ts, resend client, utils
+public/       # Static assets, resume.pdf
+proxy.ts      # Edge proxy config
+```
+
 ## Deploy
 
-Push to GitHub, import into Vercel, set env vars. The `/api/og` route uses the edge runtime; the rest is standard Node.
+Push to GitHub, import on Vercel, set env vars. `/api/og` runs on the edge runtime; everything else is standard Node.
 
 ## License
 
-Personal site — content is © Huynh Thanh Nam. The code structure is free for reuse.
+Content © Huynh Thanh Nam. Code structure free for reuse.
