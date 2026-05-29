@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { profile } from "@/content/profile";
 import { Mail, Rss, Radio } from "lucide-react";
-import { GithubIcon } from "./icons";
+import { GithubIcon, LinkedinIcon } from "./icons";
 import type { Locale } from "@/i18n/config";
 import type { Dict } from "@/i18n/dictionaries";
 
@@ -27,6 +27,15 @@ export function Footer({
             className="hover:text-foreground"
           >
             <GithubIcon className="h-4 w-4" />
+          </Link>
+          <Link
+            href={profile.socials.linkedin}
+            target="_blank"
+            rel="noreferrer"
+            aria-label="LinkedIn"
+            className="hover:text-foreground"
+          >
+            <LinkedinIcon className="h-4 w-4" />
           </Link>
           <Link
             href={localeBlogUrl(locale)}

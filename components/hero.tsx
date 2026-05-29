@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowUpRight, MapPin } from "lucide-react";
-import { GithubIcon } from "./icons";
+import { GithubIcon, LinkedinIcon } from "./icons";
 import { profile } from "@/content/profile";
 import { Container } from "./container";
 import { localeHref } from "@/lib/utils";
@@ -93,6 +93,15 @@ export function Hero({
           >
             <GithubIcon className="h-4 w-4" />
             {dict.ctaGithub}
+          </Link>
+          <Link
+            href={profile.socials.linkedin}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-2 rounded-full border border-border px-5 py-2.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <LinkedinIcon className="h-4 w-4" />
+            {dict.ctaLinkedin}
           </Link>
         </motion.div>
 

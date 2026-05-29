@@ -28,6 +28,7 @@ export const vi: Dict = {
     ctaProjects: "Xem dự án",
     ctaContact: "Liên hệ",
     ctaGithub: "GitHub",
+    ctaLinkedin: "LinkedIn",
   },
   home: {
     selectedWork: "Tuyển chọn",

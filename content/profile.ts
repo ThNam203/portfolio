@@ -10,6 +10,7 @@ export const profile = {
   avatar: "https://avatars.githubusercontent.com/u/84430638?v=4",
   socials: {
     github: "https://github.com/ThNam203",
+    linkedin: "https://www.linkedin.com/in/huynh-nam-023135227/",
     blog: "https://www.sen1or.blog/en",
     blogRss: "https://www.sen1or.blog/en/rss.xml",
     livestream: "https://letslive.work",

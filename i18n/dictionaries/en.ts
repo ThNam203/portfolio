@@ -1,7 +1,7 @@
 export type Dict = {
   meta: { siteName: string; keywords: readonly string[] };
   nav: { home: string; about: string; projects: string; experience: string; writing: string; resume: string; contact: string };
-  hero: { status: string; ctaProjects: string; ctaContact: string; ctaGithub: string };
+  hero: { status: string; ctaProjects: string; ctaContact: string; ctaGithub: string; ctaLinkedin: string };
   home: {
     selectedWork: string; projectsTitle: string; allProjects: string;
     toolbelt: string; stackTitle: string;
@@ -60,6 +60,7 @@ export const en: Dict = {
     ctaProjects: "See projects",
     ctaContact: "Get in touch",
     ctaGithub: "GitHub",
+    ctaLinkedin: "LinkedIn",
   },
   home: {
     selectedWork: "Selected work",

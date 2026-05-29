@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Mail, Radio, Rss } from "lucide-react";
-import { GithubIcon } from "@/components/icons";
+import { GithubIcon, LinkedinIcon } from "@/components/icons";
 import { Container } from "@/components/container";
 import { Section } from "@/components/section";
 import { ContactForm } from "@/components/contact-form";
@@ -28,6 +28,7 @@ export default async function ContactPage({ params }: { params: Params }) {
   const channels = [
     { label: "Email", value: profile.email, href: profile.socials.email, icon: Mail },
     { label: "GitHub", value: "@ThNam203", href: profile.socials.github, icon: GithubIcon },
+    { label: "LinkedIn", value: profile.name, href: profile.socials.linkedin, icon: LinkedinIcon },
     { label: "Blog", value: "sen1or.blog", href: blogUrl(locale), icon: Rss },
     { label: "Project", value: "letslive.work", href: profile.socials.livestream, icon: Radio },
   ];
