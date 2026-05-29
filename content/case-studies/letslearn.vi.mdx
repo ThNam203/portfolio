@@ -1,0 +1,28 @@
+## Tổng quan
+
+Nền tảng quản lý lớp học cho giáo viên và học sinh — khóa học, bài tập, quiz, họp trực tuyến, bảng vẽ cộng tác. Xây dưới dạng bốn dịch vụ chạy bằng Docker Compose.
+
+## Kiến trúc
+
+```
+Next.js UI  ──►  Spring Boot backend  (chủ đề, quiz, bài tập)
+     │
+     ├──►  LiveKit server (Go)     — video real-time & họp
+     └──►  tldraw server (Node.js) — phòng vẽ cộng tác
+```
+
+## Stack
+
+Next.js, TypeScript, Spring Boot, Java, Go, LiveKit, Node.js, tldraw, Docker Compose.
+
+## Điểm nổi bật
+
+- **Luồng học tập.** Chủ đề, quiz, bài tập, dashboard qua backend Java.
+- **Cộng tác real-time.** LiveKit cho buổi học trực tiếp; tldraw cho bảng chung và quản lý phòng.
+- **Dev multi-service cục bộ.** `docker-compose up` chạy backend, media, drawing và UI cùng lúc.
+- **UI đầy đủ.** Lịch, tổng quan khóa, dashboard, và màn hình làm quiz có trong repo.
+
+## Điều tôi sẽ làm khác
+
+- Thêm client TypeScript sinh từ OpenAPI thay vì tự type API giữa các service.
+- Tập trung hóa auth/session cho các sidecar Go và Node.

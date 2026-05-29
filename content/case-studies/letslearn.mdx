@@ -1,0 +1,28 @@
+## Overview
+
+A classroom management platform for teachers and students — courses, assignments, quizzes, live meetings, and collaborative whiteboards. Built as four services orchestrated with Docker Compose.
+
+## Architecture
+
+```
+Next.js UI  ──►  Spring Boot backend  (topics, quizzes, assignments)
+     │
+     ├──►  LiveKit server (Go)     — real-time video & meetings
+     └──►  tldraw server (Node.js) — collaborative drawing rooms
+```
+
+## Stack
+
+Next.js, TypeScript, Spring Boot, Java, Go, LiveKit, Node.js, tldraw, Docker Compose.
+
+## Highlights
+
+- **Learning workflows.** Topics, quizzes, assignments, and dashboards wired through the Java backend.
+- **Real-time collaboration.** LiveKit for live sessions; tldraw for shared boards and room management.
+- **Multi-service local dev.** `docker-compose up` brings up backend, media, drawing, and UI together.
+- **UI coverage.** Calendar, course overview, dashboard, and in-quiz flows documented in the repo.
+
+## What I'd do differently
+
+- Add OpenAPI-generated TypeScript clients instead of hand-typed API calls across services.
+- Centralize auth/session propagation across the Go and Node sidecars.

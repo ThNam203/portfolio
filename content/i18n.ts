@@ -79,17 +79,19 @@ const VI = {
         "Tiết kiệm chi phí AWS ~25% nhờ scheduling ngoài giờ, right-sizing, ECR lifecycle policy.",
       ],
     },
-    "store-management": {
-      name: "Quản lý Cửa hàng",
+    letslearn: {
+      name: "Let's Learn",
       tagline:
-        "Dashboard quản lý cửa hàng quy mô lớn. Next.js + Spring Boot.",
+        "Quản lý lớp học cho giáo viên và học sinh — video real-time, bảng cộng tác, quiz.",
       description:
-        "Website quản lý đa module cho bán lẻ: tồn kho, bán hàng, nhân sự, báo cáo.",
+        "Nền tảng học tập cộng tác đa dịch vụ: backend Spring Boot cho chủ đề, quiz, bài tập; LiveKit cho họp trực tuyến; tldraw cho bảng vẽ chung; UI Next.js.",
       role: "Lập trình viên Fullstack",
       highlights: [
-        "Frontend Next.js với dashboard phân quyền theo vai trò.",
-        "Backend Spring Boot REST, JWT auth, query phân trang.",
-        "Module: tồn kho, POS, nhân sự, khách hàng, báo cáo.",
+        "Dashboard Next.js cho khóa học, bài tập, quiz, lịch.",
+        "API Spring Boot cho chủ đề, quiz, bài tập và luồng người dùng.",
+        "Dịch vụ Go LiveKit cho video real-time và cộng tác.",
+        "Server Node tldraw cho vẽ cộng tác và quản lý phòng.",
+        "Docker Compose để dev và deploy multi-service cục bộ.",
       ],
     },
     "food-order-website": {

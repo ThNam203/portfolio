@@ -20,7 +20,7 @@ Next.js 16 (App Router) · React 19 · Tailwind CSS 4 · Framer Motion · MDX ·
 | `/` | Hero, snapshot, featured projects, stack, GitHub activity, latest posts, CTA |
 | `/about` | Long-form bio, education, certifications, skills |
 | `/projects` | Full project list |
-| `/projects/[slug]` | MDX case studies (`letslive`, `favolist5-platform`, `store-management`) |
+| `/projects/[slug]` | MDX case studies (`letslive`, `favolist5-platform`, `letslearn`) |
 | `/experience` | Work timeline |
 | `/writing` | Posts pulled live from `sen1or.blog` RSS |
 | `/resume` | PDF embed + download |
